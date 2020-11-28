@@ -148,13 +148,29 @@ const router = new VueRouter({
 });
 
 // Ensure we checked auth before each page load.
+// router.beforeEach(async (to, from, next) => {
+//   const x = routesDef.filter((x) => x.path !== "/" && x.path !== "*").find((e) => to.path.match(new RegExp(e.path)));
+//   console.log("===>>>", x, to.path);
+//   const result = await store.dispatch("checkIfUserIsAuthenticated");
+//   // if (to.path.match(/\/(@.*\/.*|settings|editor|my-feed)/g)) {
+//   if (!result) {
+//     router.push("/login");
+//   }
+//   next();
+//   // } else {
+//   //   next();
+//   // }
+// });
+
 router.beforeEach(async (to, from, next) => {
-  // const x = routesDef.filter((x) => x.path !== "/").find((e) => to.path.match(new RegExp(e.path)));
-  // console.log("===>>>", x, to.path);
-  const result = await store.dispatch("checkIfUserIsAuthenticated");
-  // if (to.path.match(/\/(@.*\/.*|settings|editor|my-feed)/g)) {
-  if (!result) {
-    router.push("/login");
+  if (to.path !== "/login" && to.path !== "/register" && to.path !== "/") {
+    const result = await store.dispatch("checkIfUserIsAuthenticated");
+    if (!result) {
+      router.push("/login");
+    }
+    next();
+  } else {
+    next();
   }
   next();
   // } else {
@@ -181,4 +197,4 @@ window.app = new Vue({
   },
 });
 
-export { store, router };
+export { router, store };
